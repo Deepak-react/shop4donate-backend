@@ -7,5 +7,4 @@ export default loginuser=(req,res)=>{
         return "login failed"
       }
      }
-  
 }
