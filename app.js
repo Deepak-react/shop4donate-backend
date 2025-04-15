@@ -1,16 +1,12 @@
-const dotenv = require('dotenv');
-dotenv.config(); // ✅ Load env variables FIRST
-
-const express = require("express");
-const app = express();
+import express, { json } from "express";
+import routes from './routes/routes.js';
 
 const PORT = process.env.PORT || 3000;
+const app = express();
 
-app.get("/", (req, res) => {
-    res.send("The shop4donate project!");
-});
+app.use(json()); // to parse JSON request bodies
+app.use('/api', routes); // mount routes under /api
 
 app.listen(PORT, () => {
-    console.log(`✅ The server is running on port ${PORT}`);
-    console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL);
+  console.log(` Server is running on port ${PORT}`);
 });

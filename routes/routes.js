@@ -1,18 +1,17 @@
 const express= require(express)
 const router=express.Router();
-const checkuser=require('../controller/loginuset')
-
-router.post('/login',checkuser);
+const checkuser=require('../controller/loginuser.js')
 
 
-router.post('/demo-data', (req, res)=>{
+router.post('/demo-data', (req,res)=>{
 
-const response = checkuser(req);
-return response;
 
+try {
+    const response= checkuser(req);
+    res.status(200).json(response);
+} catch (error) {
+    res.status(400).json({error:error.message})
+}
 })
-
-
-
 
 export default router;
