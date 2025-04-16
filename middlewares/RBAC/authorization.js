@@ -40,3 +40,14 @@ export const roleAuth = async (req) => {
 
     return decoded;
 };
+
+export const readOnlyAcess = async (req) => {
+    const decoded = await verifyToken(req);
+    console.log("Decoded Token for Role:", decoded);
+
+    if (decoded.role !== 1 && decoded.role !== 2 && decoded.role !==3) {
+        throw new Error(`Access denied for role ${decoded.role}`);
+    }
+
+    return decoded;
+};

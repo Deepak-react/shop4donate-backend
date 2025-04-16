@@ -1,5 +1,5 @@
 import { z } from "zod";
-import createsystemuser from "../../prisma/model/create_systemuser/create_systemuser.js";
+import {createsystemuser,getAllSysUsers,getSysUserById} from "../../prisma/model/systemuser/systemuser.js";
 import bcrypt from 'bcrypt';
 
 const systemuser = z.object({
@@ -14,17 +14,15 @@ const systemuser = z.object({
   bg_image: z.string()
 });
 
-export default async function createUser(userdata) {
+export  async function createUser(userdata) {
   console.log("The user data in controller", userdata);
   try {
     const parsed = systemuser.safeParse(userdata);
-
     if (!parsed.success) {
       throw new Error(parsed.error.issues.map(
         issue => `${issue.path.join('.')} - ${issue.message}`
       ).join(', '));
     }
-
     const validatedUserData = parsed.data;
     const hashedPwd = await bcrypt.hash(validatedUserData.password, 10);
 
@@ -37,6 +35,27 @@ export default async function createUser(userdata) {
     return result;
 
   } catch (error) {
-    throw new Error(error.message); // or handle it as per your use-case
+    throw new Error(error.message); 
+  }
+}
+
+//fetch  all system user
+export  async function fetchAllSysUser(){
+  try {
+    const allUser=await getAllSysUsers();
+    return allUser;
+  } catch (e) {
+    throw new Error(e.message)
+  }
+
+}
+
+//fetch system user By Id 
+export  async function fetchSysUserById(req){
+  try {
+    const getSysUser=await getSysUserById(req)
+    return getSysUser;
+  } catch (e) {
+    throw new Error(e.message)
   }
 }
