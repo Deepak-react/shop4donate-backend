@@ -1,6 +1,6 @@
 import prisma from '../../index.js';
 
-export default async function createSmtp(req,userId) {
+export  async function createSmtp(req,userId) {
     try {
         const createdUser=await prisma.adminside_user.findFirst({
             where:{
@@ -23,5 +23,73 @@ export default async function createSmtp(req,userId) {
         console.log("The error is ",error.message)
         throw new Error(error.message);
         
+    }
+}
+
+
+export async function getAllSmtpEmails(req){
+    try {
+        const result=await prisma.smtp_settings.findMany({
+            include:{
+                adminside_user_smtp_settings_created_byToadminside_user:{
+                    select:{
+                        name:true
+                    }
+                },
+                adminside_user_smtp_settings_updated_byToadminside_user:{
+                    select:{
+                        name:true
+                    }
+                }
+            }
+        })
+        return result.map((emails)=>({
+            ...emails,
+            created_by:emails.adminside_user_smtp_settings_created_byToadminside_user?.name,
+            updated_by:emails.adminside_user_smtp_settings_updated_byToadminside_user?.name,
+            adminside_user_smtp_settings_created_byToadminside_user:undefined,
+            adminside_user_smtp_settings_updated_byToadminside_user:undefined
+        })
+        )
+    
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+
+export async function getSmtpEmailById(req){
+    try {
+        const result=await prisma.smtp_settings.findUnique({
+            where:{
+                id:Number(req)
+            },
+                include:{
+                    adminside_user_smtp_settings_created_byToadminside_user:{
+                        select:{
+                            name:true
+                        }
+                    },
+                    adminside_user_smtp_settings_updated_byToadminside_user:{
+                        select:{
+                            name:true
+                        }
+                    }
+            }
+        })
+         //check the id is valid 
+         if(!result){
+            throw new Error("SMTP not found ")
+         }
+        return {
+            ...result,
+            created_by:result.adminside_user_smtp_settings_created_byToadminside_user?.name,
+            updated_by:result.adminside_user_smtp_settings_updated_byToadminside_user?.name,
+            adminside_user_smtp_settings_created_byToadminside_user:undefined,
+            adminside_user_smtp_settings_updated_byToadminside_user:undefined
+        }
+    } catch (e) {
+ 
+        throw new Error(e.message)
     }
 }

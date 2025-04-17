@@ -1,5 +1,5 @@
 import { z } from "zod";
-import createSmtp from "../../prisma/model/smtpsettings/smtpsettings.js";
+import {createSmtp,  getAllSmtpEmails, getSmtpEmailById } from "../../prisma/model/smtpsettings/smtpsettings.js";
 
 const InputData=z.object({
     smtp_host:z.string(),
@@ -10,7 +10,7 @@ const InputData=z.object({
     smtp_password:z.string()
 })
 
-export default async function addSmtp(req,userId){
+export  async function addSmtp(req,userId){
     try {
         const parsed=InputData.safeParse(req);
         if (!parsed.success) {
@@ -23,5 +23,25 @@ export default async function addSmtp(req,userId){
         return result;
     } catch (error) {
         throw new Error(error.message)
+    }
+}
+
+
+export async function fetchAllSmtp(){
+    try {
+        const result=await getAllSmtpEmails();
+        return result;
+    } catch (e) {
+        throw new Error(e.message)
+    }
+ 
+}
+
+export async function fetchSmtpById(req){
+    try {
+        const result=await getSmtpEmailById(req);
+        return result;
+    } catch (e) {
+        throw new Error(e.message)
     }
 }

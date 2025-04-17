@@ -34,7 +34,7 @@ export const roleAuth = async (req) => {
     const decoded = await verifyToken(req);
     console.log("Decoded Token for Role:", decoded);
 
-    if (decoded.role !== 1 && decoded.role !== 2) {
+    if (decoded.role !== 1 && decoded.role !== 2 ) {
         throw new Error(`Access denied for role ${decoded.role}`);
     }
 

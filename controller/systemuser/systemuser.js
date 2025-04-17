@@ -1,5 +1,5 @@
 import { z } from "zod";
-import {createsystemuser,getAllSysUsers,getSysUserById} from "../../prisma/model/systemuser/systemuser.js";
+import {createsystemuser,getAllSysUsers,getSysUserById, UpdatedUser} from "../../prisma/model/systemuser/systemuser.js";
 import bcrypt from 'bcrypt';
 
 const systemuser = z.object({
@@ -55,6 +55,29 @@ export  async function fetchSysUserById(req){
   try {
     const getSysUser=await getSysUserById(req)
     return getSysUser;
+  } catch (e) {
+    throw new Error(e.message)
+  }
+}
+
+export async function updateSysUser(reqId,req) {
+  try {
+    const parsed=systemuser.safeParse(req);
+    if(!parsed.success) {
+      throw new Error(parsed.error.issues.map(issue=>
+             `${issue.path.join('.')}-${issue.message}`
+      ).join(', ')
+      )
+    }
+    const validatedUserData = parsed.data;
+    const hashedPwd = await bcrypt.hash(validatedUserData.password, 10);
+
+    const userToUpdate = {
+      ...validatedUserData,
+      password: hashedPwd
+    };
+      const result=await UpdatedUser(reqId,userToUpdate);
+      return result;
   } catch (e) {
     throw new Error(e.message)
   }

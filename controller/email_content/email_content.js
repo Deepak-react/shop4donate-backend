@@ -1,7 +1,7 @@
 import { z } from "zod";
-import createEmailContent from "../../prisma/model/email_content/email_content.js";
+import { createEmailContent,  getAllEmailContent, getEmailContentById } from "../../prisma/model/email_content/email_content.js";
 
-export default async function addEmailContent(req,userId){
+export  async function addEmailContent(req,userId){
     const inputData=z.object({
         email_title:z.string(),
         email_subject:z.string(),
@@ -21,4 +21,32 @@ export default async function addEmailContent(req,userId){
         console.log("The error is",error.message)
         throw new Error(error.message)
     }
+}
+
+export async function fetchAllEmailContent() {
+    try {
+        const result=await getAllEmailContent();
+        return result;
+    } catch (e) {
+        throw new Error(e.message)
+    }
+    
+}
+
+export async function  fetchEmailContent(req) {
+    try {
+        const result =await getEmailContentById(req)
+        return result;
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+export async function fetchEContentById(req) {
+     try {
+        const result=await getEmailContentById(req)
+        return result;
+     } catch (e) {
+        throw new Error(e.message)
+     }
 }

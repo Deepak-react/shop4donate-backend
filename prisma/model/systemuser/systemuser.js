@@ -87,3 +87,40 @@ export async function getAllSysUsers() {
         }
       }
       
+
+
+      //Update system user data
+      export async function UpdatedUser(reqId,req){
+        try {
+
+          const role=await prisma.roles.findFirst({
+            where:{
+              role:req.role
+            }
+          })
+          if(!role){
+            throw new Error("Entered unknow role")
+          }
+          const result=await prisma.adminside_user.update({
+            where:{
+              id:Number(reqId)
+            },
+           data:{
+
+            employee_id:req.employee_id,
+            name:req.name,
+            email:req.email,
+            password:req.password,
+            role:role.id,
+            profile_image:req.profile_image,
+            bg_image:req.bg_image,
+            updated_at:new Date(),
+            is_active:req.is_active
+           }
+          })
+          return result;
+        } catch (e) {
+          console.log(e.message)
+          throw new Error(e.message)
+        }
+      }
