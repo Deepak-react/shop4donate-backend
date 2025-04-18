@@ -1,4 +1,4 @@
-import { createCategory,getAllCategories, getCategoryById } from "../../prisma/model/categories/categories.js";
+import { createCategory,getAllCategories, getCategoryById, updateCategory } from "../../prisma/model/categories/categories.js";
 
 export  async function addCategory(cName,userId){
     if(!cName||!userId){
@@ -27,6 +27,29 @@ export async function fetchCategoryById(req){
     try {
         const result=await getCategoryById(req)
         return result;
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+
+//edit category 
+
+
+export async function editCategory(userId,reqId,reqbody){
+    try {
+        if(!userId){
+            throw new Error("UserId required")
+        }
+        else if(!reqId){
+            throw new Error("reqId required")
+        }
+        else if(!reqbody.name){
+            throw new Error("All fields are required")
+        }else{
+            const result=await updateCategory(userId,reqId,reqbody);
+            return result;
+        }
     } catch (e) {
         throw new Error(e.message)
     }

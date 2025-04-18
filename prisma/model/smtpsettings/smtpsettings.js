@@ -27,7 +27,7 @@ export  async function createSmtp(req,userId) {
 }
 
 
-export async function getAllSmtpEmails(req){
+export async function getAllSmtpEmails(){
     try {
         const result=await prisma.smtp_settings.findMany({
             include:{
@@ -46,7 +46,7 @@ export async function getAllSmtpEmails(req){
         return result.map((emails)=>({
             ...emails,
             created_by:emails.adminside_user_smtp_settings_created_byToadminside_user?.name,
-            updated_by:emails.adminside_user_smtp_settings_updated_byToadminside_user?.name,
+            updated_by:emails.adminside_user_smtp_settings_updated_byToadminside_user?.name ||'No one updated',
             adminside_user_smtp_settings_created_byToadminside_user:undefined,
             adminside_user_smtp_settings_updated_byToadminside_user:undefined
         })
@@ -84,12 +84,38 @@ export async function getSmtpEmailById(req){
         return {
             ...result,
             created_by:result.adminside_user_smtp_settings_created_byToadminside_user?.name,
-            updated_by:result.adminside_user_smtp_settings_updated_byToadminside_user?.name,
+            updated_by:result.adminside_user_smtp_settings_updated_byToadminside_user?.name ||'No one updated',
             adminside_user_smtp_settings_created_byToadminside_user:undefined,
             adminside_user_smtp_settings_updated_byToadminside_user:undefined
         }
     } catch (e) {
- 
+        throw new Error(e.message)
+    }
+}
+
+
+export async function updateSmtp(userId,reqId,reqbody){
+    try {
+        const result=await prisma.smtp_settings.update({
+            where:{
+                id:Number(reqId)
+            },
+            data:{
+            smtp_host :reqbody.smtp_host,
+            smtp_port :reqbody.smtp_port,
+            smtp_server :reqbody.smtp_server,
+            smtp_name :reqbody.smtp_name,
+            smtp_email:reqbody.smtp_email,
+            smtp_password:reqbody.smtp_password,
+            updated_at:new Date(),
+            updated_by :userId,
+            is_active:reqbody.is_active
+            }
+        })
+        return result;
+
+    } catch (e) {
+        console.log(e.message)
         throw new Error(e.message)
     }
 }

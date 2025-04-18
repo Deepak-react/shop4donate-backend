@@ -1,5 +1,5 @@
 import { z } from "zod";
-import {createSmtp,  getAllSmtpEmails, getSmtpEmailById } from "../../prisma/model/smtpsettings/smtpsettings.js";
+import {createSmtp,  getAllSmtpEmails, getSmtpEmailById, updateSmtp } from "../../prisma/model/smtpsettings/smtpsettings.js";
 
 const InputData=z.object({
     smtp_host:z.string(),
@@ -7,7 +7,8 @@ const InputData=z.object({
     smtp_server:z.string(),
     smtp_name:z.string(),
     smtp_email: z.string().email("Invalid Email"),
-    smtp_password:z.string()
+    smtp_password:z.string(),
+    is_active:z.boolean().optional()
 })
 
 export  async function addSmtp(req,userId){
@@ -40,6 +41,25 @@ export async function fetchAllSmtp(){
 export async function fetchSmtpById(req){
     try {
         const result=await getSmtpEmailById(req);
+        return result;
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+
+export async function editSmtpSettings(userId,reqId,reqbody){
+    try {
+
+
+        const parsed=InputData.safeParse(reqbody)
+        if (!parsed.success) {
+            throw new Error(parsed.error.issues.map(
+              issue => `${issue.path.join('.')} - ${issue.message}`
+            ).join(', '));
+          }
+        const validateSmtpData=parsed.data;
+        const result=await updateSmtp(userId,reqId,validateSmtpData);
         return result;
     } catch (e) {
         throw new Error(e.message)

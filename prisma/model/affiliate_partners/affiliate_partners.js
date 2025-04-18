@@ -121,4 +121,40 @@ export async function getAllAffiliatePartners() {
       throw new Error(e.message);
     }
   }
-  
+
+//update affilate partners details
+export async function updateAffiliPartner(reqUserId,reqId,reqbody){
+  try {
+    const category=await prisma.categories.findFirst({
+      where:{
+        name:reqbody.category
+      },
+    })
+    if(!category){
+      throw new Error("Category not found")
+    }
+  const result=await prisma.affiliate_products.update({
+    where:{
+      id:Number(reqId)
+    },
+    data:{
+      affiliate_name:reqbody.name,
+      logo:reqbody.logo,
+      affiliate_link:reqbody.affiliate_link,
+      total_revenue:Number(reqbody.total_revenue),
+      updated_at:new Date(),
+      category:category.id,
+      updated_by:reqUserId,
+      is_active:reqbody.is_active=='true'?true:false,
+    }
+    
+  })
+  if(!result){
+    throw new Error("affiliate partner not found")
+  }
+  return result;
+ }catch (e) {
+  console.log(e.message)
+    throw new Error(e.message)
+  }
+}

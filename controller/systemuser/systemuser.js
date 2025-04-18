@@ -60,7 +60,7 @@ export  async function fetchSysUserById(req){
   }
 }
 
-export async function updateSysUser(reqId,req) {
+export async function editSysUser(reqId,req) {
   try {
     const parsed=systemuser.safeParse(req);
     if(!parsed.success) {

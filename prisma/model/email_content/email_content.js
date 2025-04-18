@@ -45,8 +45,7 @@ export async function getAllEmailContent(){
         return result.map((emailContent)=>({
             ...emailContent,
             created_by:emailContent.adminside_user_email_content_created_byToadminside_user?.name,
-            updated_by:result.adminside_user_email_content_updated_byToadminside_user?.name || "No one updated",
-            updated_at:result.updated_at?.updated_at||"Not updated yet",
+            updated_by:emailContent.adminside_user_email_content_updated_byToadminside_user?.name ||'No one updated',
             adminside_user_email_content_created_byToadminside_user:undefined,
             adminside_user_email_content_updated_byToadminside_user:undefined
         
@@ -73,7 +72,7 @@ export async function getEmailContentById(req){
                     select:{
                         name:true
                     }
-                }
+                },
             }
         })
         if(!result){
@@ -82,11 +81,38 @@ export async function getEmailContentById(req){
        return ({
         ...result,
         created_by:result.adminside_user_email_content_created_byToadminside_user?.name,
-        updated_by:result.adminside_user_email_content_updated_byToadminside_user?.name || "No one updated",
-        updated_at:result.updated_at?.updated_at||"Not updated yet",
+        updated_by:result.adminside_user_email_content_updated_byToadminside_user?.name||'No one updated',
         adminside_user_email_content_created_byToadminside_user:undefined,
         adminside_user_email_content_updated_byToadminside_user:undefined
        })
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+
+export async function updateEmailContent(userId,reqId,reqbody){
+    try {
+       
+        
+      
+       const result=await prisma.email_content.update({
+        where:{
+            id:Number(reqId)
+        },
+        data:{
+        email_title:reqbody.email_title,
+        email_subject:reqbody.email_subject,
+        email_body:reqbody.email_body,
+        updated_at:new Date(),
+        updated_by:userId,
+        is_active:reqbody.is_active==='true'?true:false,
+        }
+       })
+       if(!result){
+        throw new Error("Email content not Found")
+       }
+       return result;
     } catch (e) {
         throw new Error(e.message)
     }

@@ -1,13 +1,13 @@
 import express from 'express';
 const router = express.Router();
 import  checkuser from '../controller/login/loginuser.js';
-import  { createUser, fetchAllSysUser, fetchSysUserById, updateSysUser } from '../controller/systemuser/systemuser.js';
+import  { createUser, editSysUser, fetchAllSysUser, fetchSysUserById } from '../controller/systemuser/systemuser.js';
 import upload from '../middlewares/uploads.js';
 import { readOnlyAcess, roleAuth } from '../middlewares/RBAC/authorization.js';
-import {addCategory,fetchAllCategories, fetchCategoryById } from '../controller/categories/categories.js';
-import {  addAffilatePartner, fetchAffiliPartnerById, fetchAllAffiliPartner } from '../controller/affiliate_partners/affiliate_partners.js';
-import { addSmtp, fetchAllSmtp, fetchSmtpById } from '../controller/smtpsettings/smtpsettings.js';
-import { addEmailContent,  fetchAllEmailContent, fetchEContentById } from '../controller/email_content/email_content.js';
+import {addCategory,editCategory,fetchAllCategories, fetchCategoryById } from '../controller/categories/categories.js';
+import {  addAffilatePartner, editAffiliPartner, fetchAffiliPartnerById, fetchAllAffiliPartner } from '../controller/affiliate_partners/affiliate_partners.js';
+import { addSmtp, editSmtpSettings, fetchAllSmtp, fetchSmtpById } from '../controller/smtpsettings/smtpsettings.js';
+import { addEmailContent,  editEmailContent,  fetchAllEmailContent, fetchEContentById } from '../controller/email_content/email_content.js';
 
 
 //POST METHODS 
@@ -145,6 +145,7 @@ router.get('/system-userlist',async(req,res)=>{
 
 //fetch categories 
  router.get('/categorylist',async(req,res)=>{
+  await readOnlyAcess(req);
   let response;
   try {
     if(req.query.id){
@@ -160,6 +161,7 @@ router.get('/system-userlist',async(req,res)=>{
 
  //fetch affiliate partners
  router.get('/affilate-products',async(req,res)=>{
+  await readOnlyAcess(req);
   let response;
 try {
   if (req.query.id) {
@@ -176,9 +178,9 @@ try {
 
 
  //fetch SMTP settings 
-
 router.get('/smtp-list',
   async(req,res)=>{
+    await readOnlyAcess(req);
    let response;
    try {
     if(req.query.id){
@@ -195,6 +197,7 @@ router.get('/smtp-list',
 //fetch email contents
 router.get('/email-contentlist',
   async(req,res)=>{
+    await readOnlyAcess(req);
     let response;
     try {
       if (req.query.id) {
@@ -229,13 +232,69 @@ router.put('/edit-system-user',
                 profile_image:profileImagePath,
                 bg_image:bgImagePath
             };
-      const response=await updateSysUser(req.query.id,userData);
+      const response=await editSysUser(req.query.id,userData);
       return res.status(200).json(response)
     } catch (e) {
        return res.status(400).json({e:e.message})
     }
   }
 )
+
+
+
+//edit affiliate partners 
+router.put('/edit-affiliatepartners',upload.fields([{name:'logo',maxCount:1}]),
+async(req,res)=>{
+  try {
+    
+  const {id:userId}=await roleAuth(req);
+  const logoPath=req.files['logo']?.[0]?.path;
+  const reqbody={
+    ...req.body,
+    logo:logoPath
+  }
+  const response=await editAffiliPartner(userId,req.query.id,reqbody)
+  return res.status(200).json(response);
+  } catch (e) {
+   return res.status(400).json({e:e.message})
+  }
+})
+
+//edit SMTP settings
+
+router.put('/edit-smtpsettings',async(req,res)=>{
+  try {
+    const {id:userId}=await roleAuth(req);
+    const response=await editSmtpSettings(userId,req.query.id,req.body);
+    return res.status(200).json(response)
+  } catch (e) {
+    return res.status(400).json({e:e.message})
+  }
+})
+
+
+//edit email content 
+
+router.put('/edit-emailcontent',async(req,res)=>{
+  try {
+    const {id:userId}=await roleAuth(req);
+    const response=await editEmailContent(userId,req.query.id,req.body)
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(400).json({e:e.message})
+  }
+})
+
+//edit category 
+router.put('/edit-category',async(req,res)=>{
+  try {
+    const {id:userId}=await roleAuth(req);
+    const response=await editCategory(userId,req.query.id,req.body);
+    return res.status(200).json(response)
+  } catch (e) {
+    return res.status(400).json({e:e.message})
+  }
+})
 
 
   export default router;
