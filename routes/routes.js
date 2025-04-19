@@ -4,21 +4,19 @@ import  checkuser from '../controller/login/loginuser.js';
 import  { createUser, editSysUser, fetchAllSysUser, fetchSysUserById } from '../controller/systemuser/systemuser.js';
 import upload from '../middlewares/uploads.js';
 import { readOnlyAcess, roleAuth } from '../middlewares/RBAC/authorization.js';
-<<<<<<< HEAD
 import {addCategory,editCategory,fetchAllCategories, fetchCategoryById } from '../controller/categories/categories.js';
 import {  addAffilatePartner, editAffiliPartner, fetchAffiliPartnerById, fetchAllAffiliPartner } from '../controller/affiliate_partners/affiliate_partners.js';
 import { addSmtp, editSmtpSettings, fetchAllSmtp, fetchSmtpById } from '../controller/smtpsettings/smtpsettings.js';
 import { addEmailContent,  editEmailContent,  fetchAllEmailContent, fetchEContentById } from '../controller/email_content/email_content.js';
 
-=======
-import {addCategory,fetchAllCategories, fetchCategoryById } from '../controller/categories/categories.js';
-import {  addAffilatePartner, fetchAffiliPartnerById, fetchAllAffiliPartner } from '../controller/affiliate_partners/affiliate_partners.js';
-import addSmtp from '../controller/smtpsettings/smtpsettings.js';
-import addEmailContent from '../controller/email_content/email_content.js';
+// import {addCategory,fetchAllCategories, fetchCategoryById } from '../controller/categories/categories.js';
+// import {  addAffilatePartner, fetchAffiliPartnerById, fetchAllAffiliPartner } from '../controller/affiliate_partners/affiliate_partners.js';
+// import addSmtp from '../controller/smtpsettings/smtpsettings.js';
+// import addEmailContent from '../controller/email_content/email_content.js';
 import { visitors_signup, getAllVisitors,getVisitorById,updateVisitor} from '../controller/visitors_signup/visitors_signup.js';// for visitors signup
 import { roles_create, roles_get, roles_update } from '../controller/roles/roles.js';
 import visitors_login from '../controller/visitors_login/visitors_login.js';
->>>>>>> 44c36db (Added new controllers, models, and updated existing files)
+// >>>>>>> 44c36db (Added new controllers, models, and updated existing files)
 
 //POST METHODS 
 
@@ -228,7 +226,7 @@ try {
 }
  });
 
-<<<<<<< HEAD
+
 
  //fetch SMTP settings 
 router.get('/smtp-list',
@@ -350,8 +348,7 @@ router.put('/edit-category',async(req,res)=>{
 })
 
 
-  export default router;
-=======
+ 
  
  
 // GET- Route to get all roles with roleAuth + controller logic
@@ -426,4 +423,4 @@ router.put('/visitors_signup/:id', upload.fields([{ name: 'profile_image', maxCo
 
    
 export default router;
->>>>>>> 44c36db (Added new controllers, models, and updated existing files)
+// >>>>>>> 44c36db (Added new controllers, models, and updated existing files)
