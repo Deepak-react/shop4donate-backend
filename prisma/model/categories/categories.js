@@ -56,7 +56,6 @@ export async function getAllCategories() {
     }  
 }
 
-
 export async function getCategoryById(req){
     try {
         const result=await prisma.categories.findUnique({
@@ -77,17 +76,16 @@ export async function getCategoryById(req){
             
         }
     })
-        if(!result) throw new Error("Category not found")
+    if(!result) throw new Error("Category not found")
         return {
     ...result,
     created_by:  result.adminside_user_categories_created_byToadminside_user?.name,
-    updated_at:category.updated_at?.updated_at||"Not yet updated",
+    updated_at:result.updated_at?.updated_at||"Not yet updated",
     updated_by:result.adminside_user_categories_updated_byToadminside_user?.name||'No one updated',
     adminside_user_categories_created_byToadminside_user:undefined,
     adminside_user_categories_updated_byToadminside_user:undefined
     };
     } catch (e) {
-      
         throw new Error(e.message)
     }
 }

@@ -21,7 +21,10 @@ export  async function addSmtp(req,userId){
           }       
            const validateSmtpData=parsed.data;
         const result=await createSmtp(validateSmtpData,userId)
-        return result;
+        return {
+            ...result,
+            smtp_password:undefined
+        };
     } catch (error) {
         throw new Error(error.message)
     }
@@ -31,7 +34,10 @@ export  async function addSmtp(req,userId){
 export async function fetchAllSmtp(){
     try {
         const result=await getAllSmtpEmails();
-        return result;
+        return {
+            ...result,
+            smtp_password:undefined
+        };
     } catch (e) {
         throw new Error(e.message)
     }
@@ -41,7 +47,10 @@ export async function fetchAllSmtp(){
 export async function fetchSmtpById(req){
     try {
         const result=await getSmtpEmailById(req);
-        return result;
+        return {
+            ...result,
+            smtp_password:undefined
+        };
     } catch (e) {
         throw new Error(e.message)
     }
@@ -60,8 +69,11 @@ export async function editSmtpSettings(userId,reqId,reqbody){
           }
         const validateSmtpData=parsed.data;
         const result=await updateSmtp(userId,reqId,validateSmtpData);
-        return result;
+        return {
+            ...result,
+            smtp_password:undefined
+        };
     } catch (e) {
-        throw new Error(e.message)
+        throw new Error(e.message) 
     }
 }

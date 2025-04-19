@@ -11,10 +11,13 @@ export default async function loginuser(login_user){
            if(!comparepwt){
             throw Error("Invalid password");
            }
-           if(!is_user.is_active===true) throw new Error ("User is not active")
+           if(!is_user.is_active===true) throw new Error ("User is not active") 
           //generate JWT token 
           const jwttoken=generateJWTtoken(is_user);
-          return {user:is_user,token:jwttoken}
+          return {user:{
+            ...is_user,
+             password:undefined}
+            ,token:jwttoken}
            } catch (error) {
             console.error(`${error.message}`)
            throw new Error(`${error.message}`)

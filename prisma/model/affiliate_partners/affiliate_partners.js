@@ -147,7 +147,6 @@ export async function updateAffiliPartner(reqUserId,reqId,reqbody){
       updated_by:reqUserId,
       is_active:reqbody.is_active=='true'?true:false,
     }
-    
   })
   if(!result){
     throw new Error("affiliate partner not found")
