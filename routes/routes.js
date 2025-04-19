@@ -4,11 +4,21 @@ import  checkuser from '../controller/login/loginuser.js';
 import  { createUser, editSysUser, fetchAllSysUser, fetchSysUserById } from '../controller/systemuser/systemuser.js';
 import upload from '../middlewares/uploads.js';
 import { readOnlyAcess, roleAuth } from '../middlewares/RBAC/authorization.js';
+<<<<<<< HEAD
 import {addCategory,editCategory,fetchAllCategories, fetchCategoryById } from '../controller/categories/categories.js';
 import {  addAffilatePartner, editAffiliPartner, fetchAffiliPartnerById, fetchAllAffiliPartner } from '../controller/affiliate_partners/affiliate_partners.js';
 import { addSmtp, editSmtpSettings, fetchAllSmtp, fetchSmtpById } from '../controller/smtpsettings/smtpsettings.js';
 import { addEmailContent,  editEmailContent,  fetchAllEmailContent, fetchEContentById } from '../controller/email_content/email_content.js';
 
+=======
+import {addCategory,fetchAllCategories, fetchCategoryById } from '../controller/categories/categories.js';
+import {  addAffilatePartner, fetchAffiliPartnerById, fetchAllAffiliPartner } from '../controller/affiliate_partners/affiliate_partners.js';
+import addSmtp from '../controller/smtpsettings/smtpsettings.js';
+import addEmailContent from '../controller/email_content/email_content.js';
+import { visitors_signup, getAllVisitors,getVisitorById,updateVisitor} from '../controller/visitors_signup/visitors_signup.js';// for visitors signup
+import { roles_create, roles_get, roles_update } from '../controller/roles/roles.js';
+import visitors_login from '../controller/visitors_login/visitors_login.js';
+>>>>>>> 44c36db (Added new controllers, models, and updated existing files)
 
 //POST METHODS 
 
@@ -119,7 +129,46 @@ router.post('/adminsidelogin', async (req, res) => {
         res.status(400).json({e:e.message})
       }
     })
-    
+ 
+// post - Website visitors signup
+router.post('/visitors_signup', upload.fields([{ name: 'profile_image', maxCount: 1 },
+    { name: 'bg_image', maxCount: 1 },]),
+    async (req, res) => {
+    try {
+      await visitors_signup(req, res); // let the controller handle the response
+    } catch (error) {
+      console.error('Route Error:', error.message);
+      res.status(500).json({ message: 'Internal server error from route.' });
+    }
+  }
+);
+
+
+
+// Protected Route: Only role 1 or 2 can access
+router.post('/roles', async (req, res) => {
+  try {
+    await roleAuth(req); // Verify token and role here 
+    await roles_create(req, res); // Proceed to controller
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+});
+
+
+
+// post visitors Login Route
+router.post('/visitors_login', async (req, res) => {
+  try {
+    console.log("Visitor login request body:", req.body);
+    const response = await visitors_login(req.body);
+    console.log("Login success response:", response);
+    return res.status(200).json(response);
+
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
 
 //GET METHODS 
 
@@ -150,11 +199,14 @@ router.get('/system-userlist',async(req,res)=>{
   try {
     if(req.query.id){
      response=await fetchCategoryById(req.query.id)
-    }else{
+    }
+    else{
      response=await fetchAllCategories();
     }
     return res.status(200).json(response);
-  } catch (e) {
+  } 
+  
+  catch (e) {
     return res.status(401).json({e:e.message})
   }
  })
@@ -174,8 +226,9 @@ try {
 } catch (e) {
   return res.status(401).json({e:e.message});
 }
- })
+ });
 
+<<<<<<< HEAD
 
  //fetch SMTP settings 
 router.get('/smtp-list',
@@ -298,3 +351,79 @@ router.put('/edit-category',async(req,res)=>{
 
 
   export default router;
+=======
+ 
+ 
+// GET- Route to get all roles with roleAuth + controller logic
+router.get('/roles', async (req, res) => {
+  try {
+    await roleAuth(req); // Verify token and role
+    await roles_get(req, res); // Custom controller logic for all roles
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+});
+
+// GET- Route to get a specific role by ID (without using optional `?`)
+router.get('/roles/:id', async (req, res) => {
+  try {
+    await roleAuth(req); // Token and role verification
+    await roles_get(req, res); // Use same controller to handle single role logic
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+});
+
+
+//  GET all visitors
+router.get('/visitors_signup', async (req, res) => {
+  try {
+    await roleAuth(req); //  Token and role verification
+    await getAllVisitors(req, res);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+//  GET visitor by ID
+router.get('/visitors_signup/:id', async (req, res) => {
+  try {
+    await getVisitorById(req, res);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+// PUT method
+
+router.put('/roles/:id', async (req, res) => {
+  try {
+    await roleAuth(req); //  Token and role verification
+    await roles_update(req, res); //  Call controller
+  } 
+  catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+});
+
+
+router.put('/visitors_signup/:id', upload.fields([{ name: 'profile_image', maxCount: 1 },
+  { name: 'bg_image', maxCount: 1 },]),
+   async (req, res) => {
+  try {
+    await updateVisitor(req.params.id,req, res);
+     // let the controller handle the response
+
+  }
+      catch (error) {
+        console.error('Route Error:', error.message);
+        res.status(500).json({ message: 'Internal server error from route.' });
+      }
+    });
+
+   
+export default router;
+>>>>>>> 44c36db (Added new controllers, models, and updated existing files)
